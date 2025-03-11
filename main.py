@@ -27,10 +27,11 @@ class Button(ctk.CTkButton):
     )
 
 class Entry(ctk.CTkEntry):
-  def __init__(self, master, placeholder_text_color = None, textvariable = None, placeholder_text = None):
+  def __init__(self, master, textvariable = None, placeholder_text = None):
    super().__init__(
             master,
             width=64,
+            textvariable=textvariable,
             placeholder_text=placeholder_text,
             fg_color="#D9D9D9",  
             text_color="#262626",   
@@ -40,15 +41,16 @@ class Entry(ctk.CTkEntry):
         )
 # --------------------------------------------------------------
 
-# Functions -----------------------------------------------------
+# -------------------------------------------------------
 def increase():
   matrix_size.set(matrix_size.get() + 1)
 
 
 def decrease():
   matrix_size.set(matrix_size.get() - 1)
-# --------------------------------------------------------------
 
+
+# --------------------------------------------------------------
 
 title_label = ctk.CTkLabel(window, text="Linear Systems Solutions", font=title_font)
 title_label.pack(pady = 20)
@@ -56,32 +58,30 @@ title_label.pack(pady = 20)
 cells_frame = ctk.CTkFrame(master=window)
 cells_frame.pack(pady=20)
 
-
-matrix_size = ctk.IntVar(value=3)
+matrix_size = ctk.IntVar(value=2)
 matrix = []
+entries = []
 
-print(matrix_size.get())
-
+# Allocating Matrix Size
 for i in range(matrix_size.get()):
   line = []
   for j in range(matrix_size.get() + 1):
-    line.append(ctk.IntVar(value=0))
+    line.append(0)
   matrix.append(line)
 
 
 # Rendering Matrix Cells
 for i in range(matrix_size.get()):
-
   row_frame = ctk.CTkFrame(cells_frame, fg_color="transparent")  
   row_frame.pack(pady=5)
+  row_entries = []
 
   for j in range(matrix_size.get() + 1):
-
     placeholder = f"x{j+1}" if j < matrix_size.get() else ""
 
-    aux = matrix[i][j]
-    entry = Entry(row_frame, placeholder_text=placeholder, textvariable=aux)
+    entry = Entry(row_frame, placeholder_text=placeholder)
     entry.pack(side="left", padx=5)
+    row_entries.append(entry)
 
     if j < matrix_size.get() - 1:
       plus_label = ctk.CTkLabel(row_frame, text="+", font=text_font)
@@ -91,7 +91,18 @@ for i in range(matrix_size.get()):
       equals_label = ctk.CTkLabel(row_frame, text="=", font=text_font)
       equals_label.pack(side="left", padx=5)
 
-  
+  entries.append(row_entries)
+
+def get_matrix_values():
+  for i in range(matrix_size.get()):
+    for j in range(matrix_size.get() + 1):
+      value = entries[i][j].get()  
+      matrix[i][j] = float(value)
+      print(f"[{i}][{j}] = {matrix[i][j]}")
+
+get_values_button = Button(window, text="values", command=get_matrix_values)
+get_values_button.pack(pady=10)
+
 
 
 # increase_button = Button(frame, text="+", width=30, command=increase)
