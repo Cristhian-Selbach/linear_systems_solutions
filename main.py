@@ -53,29 +53,45 @@ def decrease():
 title_label = ctk.CTkLabel(window, text="Linear Systems Solutions", font=title_font)
 title_label.pack(pady = 20)
 
-matrix_size = ctk.IntVar(value=2)
-matrix = []
-
-
 cells_frame = ctk.CTkFrame(master=window)
 cells_frame.pack(pady=20)
 
-variables_frame = ctk.CTkFrame(master=cells_frame)
-variables_frame.pack()
 
-x_var_label = ctk.CTkLabel(variables_frame, text="x", font=title_font)
-y_var_label = ctk.CTkLabel(variables_frame, text="y", font=title_font)
-z_var_label = ctk.CTkLabel(variables_frame, text="z", font=title_font)
-x_var_label.pack(side="left", padx=20)
-y_var_label.pack(side="left", padx=20)
-z_var_label.pack(side="left", padx=20)
+matrix_size = ctk.IntVar(value=3)
+matrix = []
+
+print(matrix_size.get())
+
+for i in range(matrix_size.get()):
+  line = []
+  for j in range(matrix_size.get() + 1):
+    line.append(ctk.IntVar(value=0))
+  matrix.append(line)
 
 
 # Rendering Matrix Cells
-for i in range(3**2):
-  entry = Entry(cells_frame, placeholder_text=f"{i}")
-  entry.pack()
+for i in range(matrix_size.get()):
 
+  row_frame = ctk.CTkFrame(cells_frame, fg_color="transparent")  
+  row_frame.pack(pady=5)
+
+  for j in range(matrix_size.get() + 1):
+
+    placeholder = f"x{j+1}" if j < matrix_size.get() else ""
+
+    aux = matrix[i][j]
+    entry = Entry(row_frame, placeholder_text=placeholder, textvariable=aux)
+    entry.pack(side="left", padx=5)
+
+    if j < matrix_size.get() - 1:
+      plus_label = ctk.CTkLabel(row_frame, text="+", font=text_font)
+      plus_label.pack(side="left", padx=5)
+
+    if j == matrix_size.get() - 1:
+      equals_label = ctk.CTkLabel(row_frame, text="=", font=text_font)
+      equals_label.pack(side="left", padx=5)
+
+  
 
 
 # increase_button = Button(frame, text="+", width=30, command=increase)
