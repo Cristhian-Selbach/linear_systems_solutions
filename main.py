@@ -1,23 +1,26 @@
 import customtkinter as ctk
+from tkinter import messagebox
+
 
 # Project settings ---------------------------------------------
 window = ctk.CTk()
 window.title("Linear Systems Solutions")
-window.geometry("900x450")
+window.geometry("900x500")
 window.iconbitmap("assets/icon.ico")
 
 title_font=ctk.CTkFont(family='Inter', size=28, weight="bold")
+caption_font=ctk.CTkFont(family='Inter', size=18, weight="bold")
 text_font=ctk.CTkFont(family='Inter', size=14, weight="bold")
 # --------------------------------------------------------------
 
 # Patterns -----------------------------------------------------
 class Button(ctk.CTkButton):
-  def __init__(self, master, text, width=140, command=None):
+  def __init__(self, master, text, width=140, command=None, fg_color="#D9D9D9"):
     super().__init__(
       master, 
       text=text,
       width=width,
-      fg_color="#D9D9D9",   
+      fg_color=fg_color,   
       hover_color="#8A8A8A", 
       text_color="#262626",
       corner_radius=0,
@@ -41,75 +44,131 @@ class Entry(ctk.CTkEntry):
         )
 # --------------------------------------------------------------
 
-# -------------------------------------------------------
+# -------------------------------------------------------------
 def increase():
   matrix_size.set(matrix_size.get() + 1)
-
+  render_matrix_cells()
 
 def decrease():
-  matrix_size.set(matrix_size.get() - 1)
-
-
+  if matrix_size.get() > 2:
+    matrix_size.set(matrix_size.get() - 1)
+    render_matrix_cells()
 # --------------------------------------------------------------
 
 title_label = ctk.CTkLabel(window, text="Linear Systems Solutions", font=title_font)
 title_label.pack(pady = 20)
 
-cells_frame = ctk.CTkFrame(master=window)
-cells_frame.pack(pady=20)
-
 matrix_size = ctk.IntVar(value=2)
+matrix_entries = []
 matrix = []
-entries = []
 
-# Allocating Matrix Size
-for i in range(matrix_size.get()):
-  line = []
-  for j in range(matrix_size.get() + 1):
-    line.append(0)
-  matrix.append(line)
+matrix_frame = ctk.CTkFrame(master=window)
+matrix_frame.pack(pady=20)
 
+cells_frame = None
 
-# Rendering Matrix Cells
-for i in range(matrix_size.get()):
-  row_frame = ctk.CTkFrame(cells_frame, fg_color="transparent")  
-  row_frame.pack(pady=5)
-  row_entries = []
+def render_matrix_cells():
 
-  for j in range(matrix_size.get() + 1):
-    placeholder = f"x{j+1}" if j < matrix_size.get() else ""
+  global cells_frame, matrix_entries
 
-    entry = Entry(row_frame, placeholder_text=placeholder)
-    entry.pack(side="left", padx=5)
-    row_entries.append(entry)
+  if cells_frame:
+    cells_frame.destroy()
 
-    if j < matrix_size.get() - 1:
-      plus_label = ctk.CTkLabel(row_frame, text="+", font=text_font)
-      plus_label.pack(side="left", padx=5)
+  cells_frame = ctk.CTkFrame(master=matrix_frame)
+  cells_frame.pack()
 
-    if j == matrix_size.get() - 1:
-      equals_label = ctk.CTkLabel(row_frame, text="=", font=text_font)
-      equals_label.pack(side="left", padx=5)
+  matrix_entries.clear()
 
-  entries.append(row_entries)
+  for i in range(matrix_size.get()):
+    row_frame = ctk.CTkFrame(cells_frame, fg_color="transparent")  
+    row_frame.pack(pady=5)
+    row_entries = []
+
+    for j in range(matrix_size.get() + 1):
+      placeholder = f"x{j+1}" if j < matrix_size.get() else ""
+
+      entry = Entry(row_frame, placeholder_text=placeholder)
+      entry.pack(side="left", padx=5)
+      row_entries.append(entry)
+
+      if j < matrix_size.get() - 1:
+        plus_label = ctk.CTkLabel(row_frame, text="+", font=text_font)
+        plus_label.pack(side="left", padx=5)
+
+      if j == matrix_size.get() - 1:
+        equals_label = ctk.CTkLabel(row_frame, text="=", font=text_font)
+        equals_label.pack(side="left", padx=5)
+
+    matrix_entries.append(row_entries)
+
+render_matrix_cells()
+
+def allocate_matrix_size():
+  global matrix
+  size = matrix_size.get()
+
+  while len(matrix) < size:
+    matrix.append([0] * (size + 1))  
+  for i in range(size):
+    while len(matrix[i]) < size + 1:
+       matrix[i].append(0) 
 
 def get_matrix_values():
+  allocate_matrix_size()
+
   for i in range(matrix_size.get()):
     for j in range(matrix_size.get() + 1):
-      value = entries[i][j].get()  
-      matrix[i][j] = float(value)
-      print(f"[{i}][{j}] = {matrix[i][j]}")
 
-get_values_button = Button(window, text="values", command=get_matrix_values)
-get_values_button.pack(pady=10)
+      try:
+        value = float(matrix_entries[i][j].get())  
+        matrix[i][j] = value
+        print(f"[{i}][{j}] = {matrix[i][j]}")
 
+      except ValueError:
+        messagebox.showerror("Input Error", f"The value at position [{i+1}][{j+1}] is not a valid number.")
+        print(f"[{i}][{j}] = Invalid")
 
+def render_options():
+  options_frame = ctk.CTkFrame(window, fg_color="transparent")
+  options_frame.pack(pady=20)
 
-# increase_button = Button(frame, text="+", width=30, command=increase)
-# decrease_button = Button(frame, text="-", width=30)
-# increase_button.pack(side="left")
-# decrease_button.pack(side="left")
+  cells_label = ctk.CTkLabel(options_frame, text="Cells: ", font=caption_font)
+  cells_label.pack(side="left", padx=5)
 
+  increase_button = Button(options_frame, text="+", width=40, command=increase)
+  increase_button.pack(side="left", padx=5)
 
+  decrease_button = Button(options_frame, text="-", width=40, command=decrease)
+  decrease_button.pack(side="left", padx=5)
+
+  bar_frame_1 = ctk.CTkFrame(options_frame, width=3, height=30, fg_color="#D9D9D9")
+  bar_frame_1.pack(side="left", padx=8)
+
+  option_menu = ctk.CTkOptionMenu(
+      options_frame, 
+      values=["Gaussian Elimination", "Cramer's Rule", "LU Decomposition"],  # Opções do menu
+      fg_color="#D9D9D9",  
+      button_color="#8A8A8A", 
+      button_hover_color="#686868",  
+      text_color="#262626", 
+      corner_radius=0,  
+      font=text_font,
+      dropdown_font=text_font
+  )
+  option_menu.pack(side="left", padx=5)
+
+  bar_frame_2 = ctk.CTkFrame(options_frame, width=3, height=30, fg_color="#D9D9D9")
+  bar_frame_2.pack(side="left", padx=8)
+
+  example_button = Button(options_frame, text="Example", width=90)
+  example_button.pack(side="left", padx=5)
+
+  bar_frame_3 = ctk.CTkFrame(options_frame, width=3, height=30, fg_color="#D9D9D9")
+  bar_frame_3.pack(side="left", padx=8)
+
+  solve_button = Button(options_frame, text="Solve", width=80, fg_color="#F46F6F", command=get_matrix_values)
+  solve_button.pack(side="left", padx=5)
+
+render_options()
 
 window.mainloop()
