@@ -1,9 +1,10 @@
 import customtkinter as ctk
 from tkinter import messagebox
-
+from PIL import Image
 
 # Project settings ---------------------------------------------
 window = ctk.CTk()
+ctk.set_appearance_mode("dark")
 window.title("Linear Systems Solutions")
 window.geometry("900x500")
 window.iconbitmap("assets/icon.ico")
@@ -42,9 +43,8 @@ class Entry(ctk.CTkEntry):
             corner_radius=0,
             font=text_font,
         )
-# --------------------------------------------------------------
 
-# -------------------------------------------------------------
+# --------------------------------------------------------------
 def increase():
   matrix_size.set(matrix_size.get() + 1)
   render_matrix_cells()
@@ -53,10 +53,37 @@ def decrease():
   if matrix_size.get() > 2:
     matrix_size.set(matrix_size.get() - 1)
     render_matrix_cells()
-# --------------------------------------------------------------
+
+current_theme = ctk.get_appearance_mode()
 
 title_label = ctk.CTkLabel(window, text="Linear Systems Solutions", font=title_font)
 title_label.pack(pady = 20)
+
+def change_theme():
+  global current_theme, theme_image
+    
+  if current_theme == "Dark":
+    ctk.set_appearance_mode("light")
+    current_theme = "Light"
+    new_image = Image.open("assets/images/dark_mode.png")
+    theme_mode_button.configure(hover_color="#BCBCBC")
+
+  else:
+    ctk.set_appearance_mode("dark")
+    current_theme = "Dark"
+    new_image = Image.open("assets/images/light_mode.png")
+    theme_mode_button.configure(hover_color="#1A1A1A")
+
+  theme_image = ctk.CTkImage(new_image, size=(25, 25))
+  theme_mode_button.configure(image=theme_image)
+
+
+theme_image = Image.open("assets/images/light_mode.png")
+button_image = ctk.CTkImage(light_image=theme_image, size=(25, 25))
+
+theme_mode_button = ctk.CTkButton(window, text="", image=button_image, width=25, hover_color="#1A1A1A", fg_color="transparent", command=change_theme)
+theme_mode_button.place(x=800, y=25)
+
 
 matrix_size = ctk.IntVar(value=2)
 matrix_entries = []
@@ -68,7 +95,6 @@ matrix_frame.pack(pady=20)
 cells_frame = None
 
 def render_matrix_cells():
-
   global cells_frame, matrix_entries
 
   if cells_frame:
