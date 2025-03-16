@@ -43,21 +43,11 @@ class Entry(ctk.CTkEntry):
             corner_radius=0,
             font=text_font,
         )
-
 # --------------------------------------------------------------
-def increase():
-  matrix_size.set(matrix_size.get() + 1)
-  render_matrix_cells()
-
-def decrease():
-  if matrix_size.get() > 2:
-    matrix_size.set(matrix_size.get() - 1)
-    render_matrix_cells()
-
-current_theme = ctk.get_appearance_mode()
-
 title_label = ctk.CTkLabel(window, text="Linear Systems Solutions", font=title_font)
 title_label.pack(pady = 20)
+
+current_theme = ctk.get_appearance_mode()
 
 def change_theme():
   global current_theme, theme_image
@@ -77,13 +67,11 @@ def change_theme():
   theme_image = ctk.CTkImage(new_image, size=(25, 25))
   theme_mode_button.configure(image=theme_image)
 
-
 theme_image = Image.open("assets/images/light_mode.png")
 button_image = ctk.CTkImage(light_image=theme_image, size=(25, 25))
 
 theme_mode_button = ctk.CTkButton(window, text="", image=button_image, width=25, hover_color="#1A1A1A", fg_color="transparent", command=change_theme)
 theme_mode_button.place(x=800, y=25)
-
 
 matrix_size = ctk.IntVar(value=2)
 matrix_entries = []
@@ -153,6 +141,15 @@ def get_matrix_values():
       except ValueError:
         messagebox.showerror("Input Error", f"The value at position [{i+1}][{j+1}] is not a valid number.")
         print(f"[{i}][{j}] = Invalid")
+
+def increase():
+  matrix_size.set(matrix_size.get() + 1)
+  render_matrix_cells()
+
+def decrease():
+  if matrix_size.get() > 2:
+    matrix_size.set(matrix_size.get() - 1)
+    render_matrix_cells()
 
 def render_options():
   options_frame = ctk.CTkFrame(window, fg_color="transparent")
