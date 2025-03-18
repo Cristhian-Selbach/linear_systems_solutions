@@ -1,6 +1,7 @@
-import customtkinter as ctk
 from tkinter import messagebox
+import customtkinter as ctk
 from PIL import Image
+import numpy as np
 
 # Project settings ---------------------------------------------
 window = ctk.CTk()
@@ -138,9 +139,12 @@ def get_matrix_values():
         matrix[i][j] = value
         print(f"[{i}][{j}] = {matrix[i][j]}")
 
+
       except ValueError:
         messagebox.showerror("Input Error", f"The value at position [{i+1}][{j+1}] is not a valid number.")
         print(f"[{i}][{j}] = Invalid")
+
+  print(cramer_rule())
 
 def increase():
   matrix_size.set(matrix_size.get() + 1)
@@ -191,6 +195,39 @@ def render_options():
 
   solve_button = Button(options_frame, text="Solve", width=80, fg_color="#F46F6F", command=get_matrix_values)
   solve_button.pack(side="left", padx=5)
+
+def cramer_rule():
+  coefficients_matrix = []
+  independent_terms = []
+
+  # Split the matrix into two: coefficients matrix and independent terms array
+  for i in range(matrix_size.get()):
+    lines = []
+    for j in range(matrix_size.get() + 1):
+      if j < matrix_size.get():
+        lines.append(matrix[i][j])
+      else: independent_terms.append(matrix[i][j])
+    coefficients_matrix.append(lines)
+
+  np_coefficients = np.array(coefficients_matrix) 
+  delta = np.linalg.det(np_coefficients)
+  determinants = []
+
+  # Column Permutation
+  for i in range(matrix_size.get()):
+    operations_matrix = np.copy(coefficients_matrix)
+    for j in range(matrix_size.get()):
+      operations_matrix[j][i] = independent_terms[j]  
+    theta = round(np.linalg.det(operations_matrix))
+    determinants.append(theta)
+
+  result = []
+
+  for i in range(matrix_size.get()):
+    x = determinants[i] / delta
+    result.append(x)
+
+  return result
 
 render_options()
 

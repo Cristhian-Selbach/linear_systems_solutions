@@ -33,7 +33,7 @@ def cramer_rule():
     operations_matrix = np.copy(coefficients_matrix)
     for j in range(matrix_size):
       operations_matrix[j][i] = independent_terms[j]  
-    theta = round(np.linalg.det(operations_matrix), 6)
+    theta = round(np.linalg.det(operations_matrix))
     determinants.append(theta)
 
   result = []
