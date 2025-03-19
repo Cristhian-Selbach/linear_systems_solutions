@@ -2,7 +2,7 @@ from tkinter import messagebox
 import customtkinter as ctk
 from PIL import Image
 import numpy as np
-from cramer import cramers_rule
+from cramer import cramers_rule, UndefinedSystemException
 
 # Project settings ---------------------------------------------
 window = ctk.CTk()
@@ -164,9 +164,12 @@ def solve():
       print("resolvendo por gauss")
 
     case "Cramer's Rule":
-      response, execution_time = cramers_rule(matrix_size=matrix_size.get(), matrix=matrix)
-      print("Resposta:", response)
-      print("Tempo de execução:", execution_time, "s")   
+      try:
+        response, execution_time = cramers_rule(matrix_size=matrix_size.get(), matrix=matrix)
+        print(response)
+        print("time to execution", execution_time, "s") 
+      except UndefinedSystemException as e:
+        print(e)
 
     case "LU Decomposition":
       print("resolvendo por LU CODSADA")

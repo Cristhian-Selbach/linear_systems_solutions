@@ -2,6 +2,9 @@ import numpy as np
 from tkinter import messagebox
 import time
 
+class UndefinedSystemException(Exception):
+  pass
+
 def cramers_rule(matrix_size, matrix):
   start_time = time.time()
 
@@ -21,7 +24,9 @@ def cramers_rule(matrix_size, matrix):
   delta = np.linalg.det(np_coefficients)
 
   if(round(delta, 6) == 0):
-    return messagebox.showerror("Input Error", f"The system is impossible or has infinitely many solutions.")
+    execution_time = time.time() - start_time
+    messagebox.showerror("Input Error", f"The system is impossible or has infinitely many solutions. Execution Time: {execution_time:.6f} s")
+    raise UndefinedSystemException("The system is impossible or has infinitely many solutions.")
 
   determinants = []
   
