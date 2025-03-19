@@ -2,6 +2,7 @@ from tkinter import messagebox
 import customtkinter as ctk
 from PIL import Image
 import numpy as np
+from cramer import cramers_rule
 
 # Project settings ---------------------------------------------
 window = ctk.CTk()
@@ -82,6 +83,7 @@ matrix_frame = ctk.CTkFrame(master=window)
 matrix_frame.pack(pady=20)
 
 cells_frame = None
+resolution_method = ctk.StringVar(value="Gaussian Elimination")
 
 def render_matrix_cells():
   global cells_frame, matrix_entries
@@ -118,6 +120,15 @@ def render_matrix_cells():
 
 render_matrix_cells()
 
+def increase():
+  matrix_size.set(matrix_size.get() + 1)
+  render_matrix_cells()
+
+def decrease():
+  if matrix_size.get() > 2:
+    matrix_size.set(matrix_size.get() - 1)
+    render_matrix_cells()
+
 def allocate_matrix_size():
   global matrix
   size = matrix_size.get()
@@ -130,6 +141,7 @@ def allocate_matrix_size():
 
 def get_matrix_values():
   allocate_matrix_size()
+  global matrix
 
   for i in range(matrix_size.get()):
     for j in range(matrix_size.get() + 1):
@@ -139,21 +151,25 @@ def get_matrix_values():
         matrix[i][j] = value
         print(f"[{i}][{j}] = {matrix[i][j]}")
 
-
       except ValueError:
         messagebox.showerror("Input Error", f"The value at position [{i+1}][{j+1}] is not a valid number.")
         print(f"[{i}][{j}] = Invalid")
 
-  print(cramer_rule())
+def solve():
+  get_matrix_values()
+  method = resolution_method.get()
 
-def increase():
-  matrix_size.set(matrix_size.get() + 1)
-  render_matrix_cells()
+  match method:
+    case "Gaussian Elimination":
+      print("resolvendo por gauss")
 
-def decrease():
-  if matrix_size.get() > 2:
-    matrix_size.set(matrix_size.get() - 1)
-    render_matrix_cells()
+    case "Cramer's Rule":
+      response, execution_time = cramers_rule(matrix_size=matrix_size.get(), matrix=matrix)
+      print("Resposta:", response)
+      print("Tempo de execução:", execution_time, "s")   
+
+    case "LU Decomposition":
+      print("resolvendo por LU CODSADA")
 
 def render_options():
   options_frame = ctk.CTkFrame(window, fg_color="transparent")
@@ -172,15 +188,16 @@ def render_options():
   bar_frame_1.pack(side="left", padx=8)
 
   option_menu = ctk.CTkOptionMenu(
-      options_frame, 
-      values=["Gaussian Elimination", "Cramer's Rule", "LU Decomposition"],  # Opções do menu
-      fg_color="#D9D9D9",  
-      button_color="#8A8A8A", 
-      button_hover_color="#686868",  
-      text_color="#262626", 
-      corner_radius=0,  
-      font=text_font,
-      dropdown_font=text_font
+    options_frame, 
+    values=["Gaussian Elimination", "Cramer's Rule", "LU Decomposition"],
+    variable=resolution_method,
+    fg_color="#D9D9D9",  
+    button_color="#8A8A8A", 
+    button_hover_color="#686868",  
+    text_color="#262626", 
+    corner_radius=0,  
+    font=text_font,
+    dropdown_font=text_font
   )
   option_menu.pack(side="left", padx=5)
 
@@ -193,41 +210,9 @@ def render_options():
   bar_frame_3 = ctk.CTkFrame(options_frame, width=3, height=30, fg_color="#D9D9D9")
   bar_frame_3.pack(side="left", padx=8)
 
-  solve_button = Button(options_frame, text="Solve", width=80, fg_color="#F46F6F", command=get_matrix_values)
+  solve_button = Button(options_frame, text="Solve", width=80, fg_color="#F46F6F", command=solve)
   solve_button.pack(side="left", padx=5)
 
-def cramer_rule():
-  coefficients_matrix = []
-  independent_terms = []
-
-  # Split the matrix into two: coefficients matrix and independent terms array
-  for i in range(matrix_size.get()):
-    lines = []
-    for j in range(matrix_size.get() + 1):
-      if j < matrix_size.get():
-        lines.append(matrix[i][j])
-      else: independent_terms.append(matrix[i][j])
-    coefficients_matrix.append(lines)
-
-  np_coefficients = np.array(coefficients_matrix) 
-  delta = np.linalg.det(np_coefficients)
-  determinants = []
-
-  # Column Permutation
-  for i in range(matrix_size.get()):
-    operations_matrix = np.copy(coefficients_matrix)
-    for j in range(matrix_size.get()):
-      operations_matrix[j][i] = independent_terms[j]  
-    theta = round(np.linalg.det(operations_matrix))
-    determinants.append(theta)
-
-  result = []
-
-  for i in range(matrix_size.get()):
-    x = determinants[i] / delta
-    result.append(x)
-
-  return result
 
 render_options()
 

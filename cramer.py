@@ -1,16 +1,9 @@
 import numpy as np
+from tkinter import messagebox
+import time
 
-matrix_size = int(input("size: "))
-matrix = []
-
-for i in range(matrix_size):
-  line = []
-  for j in range(matrix_size + 1):
-    line.append(int(input(f"{i}, {j}: ")))
-  matrix.append(line)
-
-
-def cramer_rule():
+def cramers_rule(matrix_size, matrix):
+  start_time = time.time()
 
   coefficients_matrix = []
   independent_terms = []
@@ -26,8 +19,12 @@ def cramer_rule():
 
   np_coefficients = np.array(coefficients_matrix) 
   delta = np.linalg.det(np_coefficients)
-  determinants = []
 
+  if(round(delta, 6) == 0):
+    return messagebox.showerror("Input Error", f"The system is impossible or has infinitely many solutions.")
+
+  determinants = []
+  
   # Column Permutation
   for i in range(matrix_size):
     operations_matrix = np.copy(coefficients_matrix)
@@ -39,9 +36,10 @@ def cramer_rule():
   result = []
 
   for i in range(matrix_size):
-    x = determinants[i] / delta
+    x = round(determinants[i] / delta, 6)
     result.append(x)
 
-  return result
+  execution_time = round(time.time() - start_time, 6)
 
-print(cramer_rule())
+  return result, execution_time
+
