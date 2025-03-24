@@ -154,9 +154,15 @@ def get_matrix_values():
       except ValueError:
         messagebox.showerror("Input Error", f"The value at position [{i+1}][{j+1}] is not a valid number.")
         print(f"[{i}][{j}] = Invalid")
+        raise
 
 def solve():
-  get_matrix_values()
+  try:
+    get_matrix_values()
+  except ValueError: 
+    print("Error to get values")
+    return
+  
   method = resolution_method.get()
 
   match method:
