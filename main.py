@@ -173,7 +173,7 @@ def solve():
       try:
         response, execution_time = cramers_rule(matrix_size=matrix_size.get(), matrix=matrix)
         print(response)
-        print("time to execution", execution_time, "s") 
+        print("time to execution", execution_time, "ms") 
       except UndefinedSystemException as e:
         print(e)
 

@@ -44,7 +44,7 @@ def cramers_rule(matrix_size, matrix):
     x = round(determinants[i] / delta, 6)
     result.append(x)
 
-  execution_time = round(time.time() - start_time, 6)
+  execution_time = round(time.time() - start_time, 6) * 1000
 
   return result, execution_time
 
