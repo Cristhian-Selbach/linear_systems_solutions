@@ -171,10 +171,11 @@ def solve():
 
     case "Cramer's Rule":
       try:
-        response, execution_time = cramers_rule(matrix_size=matrix_size.get(), matrix=matrix)
-        print(response)
-        print("time to execution", execution_time, "ms") 
+        response, execution_time_ms = cramers_rule(matrix_size=matrix_size.get(), matrix=matrix)
+        render_result(response, execution_time_ms)
+
       except UndefinedSystemException as e:
+        # messagebox??
         print(e)
 
     case "LU Decomposition":
@@ -185,7 +186,7 @@ def randomize():
   for i in range(matrix_size.get()):
     for j in range(matrix_size.get() + 1):
       matrix_entries[i][j].delete(0, "end")
-      matrix_entries[i][j].insert(0, f"{random.randint(1, 50)}")
+      matrix_entries[i][j].insert(0, f"{random.randint(-20, 40)}")
 
 def render_options():
   options_frame = ctk.CTkFrame(window, fg_color="transparent")
@@ -229,7 +230,28 @@ def render_options():
   solve_button = Button(options_frame, text="Solve", width=80, fg_color="#F46F6F", command=solve)
   solve_button.pack(side="left", padx=5)
 
-
 render_options()
+
+result_text = None
+
+def render_result(response, execution_time):
+  global result_text
+
+  if result_text:
+    result_text.destroy()
+
+  result_text = ctk.CTkTextbox(window,width=550, border_width=0, corner_radius=5, font=text_font)
+  result_text.pack(pady=25)
+
+  print(response)
+
+  for i in range(len(response)):
+    result_text.insert(ctk.END, f"x{i+1}: {round(response[i], 6)}\n")
+
+  result_text.insert(ctk.END, "\n")
+  result_text.insert(ctk.END, f"Execution time: {round(execution_time, 3)} ms")
+  result_text.configure(state="disabled") 
+
+
 
 window.mainloop()

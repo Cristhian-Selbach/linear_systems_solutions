@@ -44,7 +44,10 @@ def cramers_rule(matrix_size, matrix):
     x = determinants[i] / delta
     result.append(x)
 
-  execution_time = round(time.time() - start_time, 6) * 1000
+  execution_time_ms = round(time.time() - start_time, 6) * 1000
+  
+  # Change array from np float type to normal float type
+  result_converted = [float(x) for x in result] 
 
-  return result, execution_time
+  return result_converted, execution_time_ms
 
