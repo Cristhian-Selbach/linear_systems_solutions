@@ -73,7 +73,7 @@ theme_image = Image.open("assets/images/light_mode.png")
 button_image = ctk.CTkImage(light_image=theme_image, size=(25, 25))
 
 theme_mode_button = ctk.CTkButton(window, text="", image=button_image, width=25, hover_color="#1A1A1A", fg_color="transparent", command=change_theme)
-theme_mode_button.place(x=800, y=25)
+theme_mode_button.place(relx=1.0, x=-44, y=22, anchor="ne")
 
 matrix_size = ctk.IntVar(value=2)
 matrix_entries = []
