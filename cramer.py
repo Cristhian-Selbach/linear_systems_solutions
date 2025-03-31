@@ -1,6 +1,7 @@
 import numpy as np
 from tkinter import messagebox
 import time
+from matrix_spliter import split_matrix
 
 class UndefinedSystemException(Exception):
   pass
@@ -11,14 +12,7 @@ def cramers_rule(matrix_size, matrix):
   coefficients_matrix = []
   independent_terms = []
 
-  # Split the matrix into two: coefficients matrix and independent terms array
-  for i in range(matrix_size):
-    lines = []
-    for j in range(matrix_size + 1):
-      if j < matrix_size:
-        lines.append(matrix[i][j])
-      else: independent_terms.append(matrix[i][j])
-    coefficients_matrix.append(lines)
+  split_matrix(matrix, matrix_size, independent_terms, coefficients_matrix)
 
   np_coefficients = np.array(coefficients_matrix) 
   delta = np.linalg.det(np_coefficients)
