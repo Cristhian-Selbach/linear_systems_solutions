@@ -211,6 +211,12 @@ def render_options():
   bar_frame_1 = ctk.CTkFrame(options_frame, width=3, height=30, fg_color="#D9D9D9")
   bar_frame_1.pack(side="left", padx=8)
 
+  random_button = Button(options_frame, text="Random", width=90, command=randomize)
+  random_button.pack(side="left", padx=5)
+
+  bar_frame_2 = ctk.CTkFrame(options_frame, width=3, height=30, fg_color="#D9D9D9")
+  bar_frame_2.pack(side="left", padx=8)
+
   option_menu = ctk.CTkOptionMenu(
     options_frame, 
     values=["Gaussian Elimination", "Cramer's Rule", "LU Decomposition"],
@@ -224,12 +230,6 @@ def render_options():
     dropdown_font=text_font
   )
   option_menu.pack(side="left", padx=5)
-
-  bar_frame_2 = ctk.CTkFrame(options_frame, width=3, height=30, fg_color="#D9D9D9")
-  bar_frame_2.pack(side="left", padx=8)
-
-  random_button = Button(options_frame, text="Random", width=90, command=randomize)
-  random_button.pack(side="left", padx=5)
 
   bar_frame_3 = ctk.CTkFrame(options_frame, width=3, height=30, fg_color="#D9D9D9")
   bar_frame_3.pack(side="left", padx=8)
