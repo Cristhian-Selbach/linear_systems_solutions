@@ -2,9 +2,7 @@ import numpy as np
 from tkinter import messagebox
 import time
 from matrix_spliter import split_matrix
-
-class UndefinedSystemException(Exception):
-  pass
+from exceptions import UndefinedSystemException
 
 def cramers_rule(matrix_size, matrix):
   start_time = time.time()
@@ -17,10 +15,9 @@ def cramers_rule(matrix_size, matrix):
   np_coefficients = np.array(coefficients_matrix) 
   delta = np.linalg.det(np_coefficients)
 
-  if(round(delta, 6) == 0):
-    execution_time = time.time() - start_time
-    messagebox.showerror("Input Error", f"The system is impossible or has infinitely many solutions. Execution Time: {execution_time:.6f} s")
-    raise UndefinedSystemException("The system is impossible or has infinitely many solutions.")
+  if(delta == 0):
+    execution_time_ms = (time.time() - start_time) * 1000
+    raise UndefinedSystemException("The system is impossible or has infinitely many solutions.", execution_time_ms)
 
   determinants = []
   
@@ -38,10 +35,9 @@ def cramers_rule(matrix_size, matrix):
     x = determinants[i] / delta
     result.append(x)
 
-  execution_time_ms = round(time.time() - start_time, 6) * 1000
-  
   # Change array from np float type to normal float type
   result_converted = [float(x) for x in result] 
 
-  return result_converted, execution_time_ms
+  execution_time_ms = round(time.time() - start_time, 6) * 1000
 
+  return result_converted, execution_time_ms

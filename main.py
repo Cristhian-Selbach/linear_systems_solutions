@@ -2,7 +2,10 @@ from tkinter import messagebox
 import customtkinter as ctk
 from PIL import Image
 import random
-from cramer import cramers_rule, UndefinedSystemException
+from cramer import cramers_rule
+from decomposition import LU_decomposition
+from exceptions import UndefinedSystemException
+
 
 # Project settings ---------------------------------------------
 window = ctk.CTk()
@@ -175,11 +178,15 @@ def solve():
         render_result(response, execution_time_ms)
 
       except UndefinedSystemException as e:
-        # messagebox??
-        print(e)
+        messagebox.showerror("Input Error", f"The system is impossible or has infinitely many solutions. Execution Time: {e.execution_time:.3f} ms")
 
     case "LU Decomposition":
-      print("resolvendo por LU CODSADA")
+      try:
+        response, execution_time_ms = LU_decomposition(matrix_size=matrix_size.get(), matrix=matrix)
+        render_result(response, execution_time_ms)
+
+      except UndefinedSystemException as e:
+        messagebox.showerror("Input Error", f"The system is impossible or has infinitely many solutions. Execution Time: {e.execution_time:.3f} ms")
 
 def randomize(): 
   render_matrix_cells()
