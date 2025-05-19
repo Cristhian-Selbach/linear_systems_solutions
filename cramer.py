@@ -1,5 +1,4 @@
 import numpy as np
-from tkinter import messagebox
 import time
 from matrix_spliter import split_matrix
 from exceptions import UndefinedSystemException
@@ -26,7 +25,7 @@ def cramers_rule(matrix_size, matrix):
     operations_matrix = np.copy(coefficients_matrix)
     for j in range(matrix_size):
       operations_matrix[j][i] = independent_terms[j]  
-    theta = round(np.linalg.det(operations_matrix))
+    theta = np.linalg.det(operations_matrix)
     determinants.append(theta)
 
   result = []
